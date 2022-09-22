@@ -3,49 +3,60 @@ Author - Teknath jha
 PRN    - 2019BTECS00033
 HPC-Lab- 3
 */
-
-// PARALLEL
+#include <bits/stdc++.h>
 #include <omp.h>
-int ROW = 2;
-int COL = 2;
-#define NUM_THREADS 4
 
-int main() {
+using namespace std;
 
-  double start = omp_get_wtime();
-  int id;
-
-  int n_per_thread;
-  int total_threads = NUM_THREADS;
-
-  int mat1[ROW][COL], mat2[ROW][COL], mat3[ROW][COL];
-  int i, j;
-  for (i = 0; i < ROW; i++) {
-    for (j = 0; j < COL; j++) {
-      mat1[i][j] = i + j;
-      mat2[i][j] = i + j;
-      mat3[i][j] = 0;
-    }
-  }
-
-  // Additional work to set the number of threads.
-  omp_set_num_threads(total_threads);
-
-  // determine how many elements each process will work on
-  n_per_thread = ROW * COL / total_threads;
-#pragma omp parallel for shared(a, b, c) private(i)                            \
-    schedule(static, n_per_thread)
-  {
-    id = omp_get_thread_num();
-
-    for (i = 0; i < ROW; i++) {
-      for (j = 0; j < COL; j++) {
-        mat3[i][j] = mat1[i][j] + mat2[i][j];
-      }
-    }
-  }
-  double end = omp_get_wtime();
-  double total_time = end - start;
-  printf("Time taken : %lf", total_time);
-  return 0;
+int main()
+{
+	
+	int tid, nthreads , i, j;
+	int n=100;
+	while(1){
+		if(n==500)
+			break;
+		else
+			n+=100;
+		nthreads=4;
+		int a[n][n], b[n][n], c[n][n];
+			
+		int index = 0;
+			
+		for (i = 0; i < n; i++)
+		{
+			
+			for (j = 0; j < n; j++)
+			{
+				a[i][j] = b[i][j] = (i+j);
+			}
+		}
+			
+		printf("Time Required to do Matrix Multiplication of size %d\nUsing Threads: %d",n,nthreads);
+		
+		double time = omp_get_wtime();
+			
+		#pragma omp parallel shared(a, b, c, nthreads) private(tid, i, j) num_threads(nthreads)
+		{
+			# pragma omp parallel for
+			for (int i = 0; i < n; i++)
+			{
+				for (int j = 0; j < n; j++)
+				{
+					c[i][j] = a[i][j] + b[i][j];
+				}
+			}
+		}
+		
+		printf("\nDone In %f Seconds\n\n", omp_get_wtime() - time);
+		
+	}
+	return 0;
 }
+
+
+
+
+
+
+Output:
