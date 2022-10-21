@@ -68,7 +68,7 @@ for(int i=0;i<n;i++){
   	 num1 = arr1[i];
   	 num2 = arr2[i];
     sum += (num1*num2);
-    printf("Sum : %d for ",sum,i)
+    printf("Sum : %d for \n",sum,i);
   }
   
   double end = omp_get_wtime();
