@@ -4,38 +4,44 @@ PRN    - 2019BTECS00033
 HPC-Lab- 3
 AIM : Sorting techniques 
 */
+// C Program to find the minimum scalar product of two vectors (dot product)
+#include<bits/stdc++.h>
+#include <omp.h>
 
-#include <stdio.h>
-#include<omp.h> 
-#include<time.h> 
-#define NUM_THREADS 4
-int n_per_thread;
+using namespace std;
 
-
-int sort(int arr[], int n) {
-  int i, j , temp;
-//  #pragma omp parallel for  shared(arr) private(i,j,temp) schedule(static, n_per_thread)
-  for (i = 0; i < n - 1; i++)
-    for (j = 0; j < n - i - 1; j++)
-      if (arr[j] > arr[j + 1]) {
-         temp = arr[j];
-        arr[j] = arr[j + 1];
-        arr[j + 1] = temp;
-      }
+int sort(int arr[], int n)
+{
+	int i, j;
+	#pragma omp parallel shared(arr) private(j)
+	#pragma omp for schedule(dynamic)
+	for (i = 0; i < n-1; i++)
+		for (j = 0; j < n-i-1; j++)
+			if (arr[j] > arr[j+1])
+			{
+				int temp = arr[j];
+				arr[j] = arr[j+1];
+				arr[j+1] = temp;
+			}
 }
 
-int sort_des(int arr[], int n) {
-  int i, j ,temp;
-//#pragma omp parallel for  shared(arr) private(i,j,temp) schedule(static, n_per_thread)
-  for (i = 0; i < n; ++i) {
-    for (j = i + 1; j < n; ++j) {
-      if (arr[i] < arr[j]) {
-        temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-      }
-    }
-  }
+int sort_des(int arr[], int n)
+{
+	int i,j;
+	#pragma omp parallel shared(arr) private(j)
+	#pragma omp for schedule(dynamic)
+	for (i = 0; i < n; ++i)
+	{
+		for (j = i + 1; j < n; ++j)
+		{
+			if (arr[i] < arr[j])
+			{
+				int a = arr[i];
+				arr[i] = arr[j];
+				arr[j] = a;
+			}
+		}
+	}
 }
 int main() {
 	
@@ -68,7 +74,7 @@ for(int i=0;i<n;i++){
   	 num1 = arr1[i];
   	 num2 = arr2[i];
     sum += (num1*num2);
-    printf("Sum : %d for \n",sum,i);
+    printf("Sum : %d for ",sum,i)
   }
   
   double end = omp_get_wtime();
