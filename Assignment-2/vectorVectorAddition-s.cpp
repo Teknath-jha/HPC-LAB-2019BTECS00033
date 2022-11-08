@@ -6,7 +6,6 @@ HPC-Lab- 2
 
 // Sequential
 
-
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +14,7 @@ HPC-Lab- 2
 #define ARRAY_SIZE 100000
 
 int main() {
-	printf("Sequential Program : \n");
+  printf("Sequential Program : \n");
 
   int n = ARRAY_SIZE;
   int i;

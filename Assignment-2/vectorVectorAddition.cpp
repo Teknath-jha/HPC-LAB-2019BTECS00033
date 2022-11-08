@@ -11,12 +11,12 @@ HPC-Lab- 2
 #include <stdlib.h>
 #include <time.h>
 
-#define ARRAY_SIZE 100000
-#define NUM_THREADS 4
+#define ARRAY_SIZE 1048576
+#define NUM_THREADS 1
 
 int main() {
-	
-	printf("Parallel Program : \n");
+
+  printf("Parallel Program : \n");
 
   int n = ARRAY_SIZE;              // number of array elements
   int n_per_thread;                // elements per thread
@@ -33,10 +33,10 @@ int main() {
   }
 
   // Additional work to set the number of threads.
-  omp_set_num_threads(total_threads);
+  // omp_set_num_threads(total_threads);
 
   // determine how many elements each process will work on
-  n_per_thread = n / total_threads;
+  // n_per_thread = n / total_threads;
 
   double start = omp_get_wtime();
 #pragma omp parallel for shared(a, b, c) private(i)                            \

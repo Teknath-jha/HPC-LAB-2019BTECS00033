@@ -1,0 +1,39 @@
+bodyForce<<<1024,64>>>(p, dt, nBodies); 
+
+CUDA Kernel Statistics:
+
+ Time(%)  Total Time (ns)  Instances  Average   Minimum  Maximum              Name            
+ -------  ---------------  ---------  --------  -------  -------  ----------------------------
+   100.0          9773062         10  977306.2   904535  1412947  bodyForce(Body*, float, int)
+
+
+
+
+bodyForce<<<512,64>>>(p, dt, nBodies); 
+
+CUDA Kernel Statistics:
+
+ Time(%)  Total Time (ns)  Instances  Average   Minimum  Maximum              Name            
+ -------  ---------------  ---------  --------  -------  -------  ----------------------------
+   100.0          9549214         10  954921.4   914198  1197651  bodyForce(Body*, float, int)
+
+
+
+bodyForce<<<512,64>>>(p, dt, nBodies);
+
+CUDA Kernel Statistics:
+
+ Time(%)  Total Time (ns)  Instances  Average   Minimum  Maximum              Name            
+ -------  ---------------  ---------  --------  -------  -------  ----------------------------
+   100.0          9726141         10  972614.1   889010  1608037  bodyForce(Body*, float, int)
+
+
+
+bodyForce<<<1024,64>>>(p, dt, nBodies);
+
+
+CUDA Kernel Statistics:
+
+ Time(%)  Total Time (ns)  Instances  Average   Minimum  Maximum              Name            
+ -------  ---------------  ---------  --------  -------  -------  ----------------------------
+   100.0          9500817         10  950081.7   915125  1186546  bodyForce(Body*, float, int)
