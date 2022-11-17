@@ -1,78 +1,61 @@
 #include <stdio.h>
+#define row1 20
+#define col1 30
+#define row2 30
+#define col2 20
 
-#define N 64
 
-__global__ void matrixMulGPU(int *a, int *b, int *c) {
-  int val = 0;
-
-  int row = blockIdx.x * blockDim.x + threadIdx.x;
-  int col = blockIdx.y * blockDim.y + threadIdx.y;
-
-  if (row < N && col < N) {
-    for (int k = 0; k < N; ++k)
-      val += a[row * N + k] * b[k * N + col];
-    c[row * N + col] = val;
+__global__ void matmul(int *l, int *m, int *n) {
+  int x = threadIdx.x;
+  int y = threadIdx.y;
+  int k;
+  n[col2 * y + x] = 0;
+  for (k = 0; k < col1; k++) {
+    n[col2 * y + x] = n[col2 * y + x] + l[col1 * y + k] * m[col2 * k + x];
   }
 }
 
-void matrixMulCPU(int *a, int *b, int *c) {
-  int val = 0;
-
-  for (int row = 0; row < N; ++row)
-    for (int col = 0; col < N; ++col) {
-      val = 0;
-      for (int k = 0; k < N; ++k)
-        val += a[row * N + k] * b[k * N + col];
-      c[row * N + col] = val;
-    }
-}
 
 int main() {
-  int *a, *b, *c_cpu, *c_gpu;
-
-  int size = N * N * sizeof(int); // Number of bytes of an N x N matrix
-
-  // Allocate memory
-  cudaMallocManaged(&a, size);
-  cudaMallocManaged(&b, size);
-  cudaMallocManaged(&c_cpu, size);
-  cudaMallocManaged(&c_gpu, size);
-
-  // Initialize memory
-  for (int row = 0; row < N; ++row)
-    for (int col = 0; col < N; ++col) {
-      a[row * N + col] = row;
-      b[row * N + col] = col + 2;
-      c_cpu[row * N + col] = 0;
-      c_gpu[row * N + col] = 0;
+  int a[row1][col1];
+  int b[row2][col2];
+  int c[row1][col2];
+  int *d, *e, *f;
+  int i, j;
+  for (i = 0; i < row1; i++) {
+    for (j = 0; j < col1; j++) {
+      a[i][j] = 2;
     }
+  }
+  for (i = 0; i < row2; i++) {
+    for (j = 0; j < col2; j++) {
+      b[i][j] = 3;
+    }
+  }
+  cudaMalloc((void **)&d, row1 * col1 * sizeof(int));
+  cudaMalloc((void **)&e, row2 * col2 * sizeof(int));
+  cudaMalloc((void **)&f, row1 * col2 * sizeof(int));
 
-  dim3 threads_per_block(16, 16, 1); // A 16 x 16 block threads
-  dim3 number_of_blocks((N / threads_per_block.x) + 1,
-                        (N / threads_per_block.y) + 1, 1);
 
-  matrixMulGPU<<<number_of_blocks, threads_per_block>>>(a, b, c_gpu);
+  cudaMemcpy(d, a, row1 * col1 * sizeof(int), cudaMemcpyHostToDevice);
+  cudaMemcpy(e, b, row2 * col2 * sizeof(int), cudaMemcpyHostToDevice);
 
-  cudaDeviceSynchronize(); // Wait for the GPU to finish before proceeding
-
-  // Call the CPU version to check our work
-  matrixMulCPU(a, b, c_cpu);
-
-  // Compare the two answers to make sure they are equal
-  bool error = false;
-  for (int row = 0; row < N && !error; ++row)
-    for (int col = 0; col < N && !error; ++col)
-      if (c_cpu[row * N + col] != c_gpu[row * N + col]) {
-        printf("FOUND ERROR at c[%d][%d]\n", row, col);
-        error = true;
-        break;
+  
+  dim3 threadBlock(col2, row1);
+  matmul<<<1, threadBlock>>>(d, e, f);
+  cudaDeviceSynchronize();
+  cudaMemcpy(c, f, row1 * col2 * sizeof(int), cudaMemcpyDeviceToHost);
+  for (i = 0; i < row1; i++) {
+    for (j = 0; j < col2; j++) {
+      if (c[i][j] != 180) {
+        printf("False\n");
+        return -1;
       }
-  if (!error)
-    printf("Success!\n");
-
-  // Free all our allocated memory
-  cudaFree(a);
-  cudaFree(b);
-  cudaFree(c_cpu);
-  cudaFree(c_gpu);
+    }
+  }
+  cudaFree(d);
+  cudaFree(e);
+  cudaFree(f);
+  printf("True\n");
+  return 0;
 }

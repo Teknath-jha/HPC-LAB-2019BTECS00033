@@ -157,14 +157,6 @@ int main(int argc, char** argv)
 
 	printf("Time took to compute matrix A of dimensions %d x %d  on GPU is %f ms \n \n \n", WA, HA, miliseconds);
 
-	//for (int i = 0;i < HB;i++)
-	//{
-	//	for (int j = 0;j < WB;j++)
-	//	{
-	//		printf("%f ", h_B[i*HB + j]);
-	//	}
-	//	printf("\n");
-	//}
 
 	free(h_A);
 	free(h_B);
