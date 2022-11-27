@@ -1,16 +1,4 @@
-/******************************************************************************
-* FILE: mpi_mm.c
-* DESCRIPTION:  
-*   MPI Matrix Multiply - C Version
-*   In this code, the master task distributes a matrix multiply
-*   operation to numtasks-1 worker tasks.
-*   NOTE:  C and Fortran versions of this code differ because of the way
-*   arrays are stored/passed.  C arrays are row-major order but Fortran
-*   arrays are column-major order.
-* AUTHOR: Blaise Barney. Adapted from Ros Leibensperger, Cornell Theory
-*   Center. Converted to MPI: George L. Gusciora, MHPCC (1/95)
-* LAST REVISED: 04/13/05
-******************************************************************************/
+
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
